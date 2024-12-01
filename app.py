@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_file, jsonify
+from flask import Flask, request, send_file, jsonify
 import os
 from pathlib import Path
 from converter import FileConverter
@@ -13,10 +13,6 @@ converter = FileConverter()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf', 'png'}
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 @app.route('/convert', methods=['POST'])
 def convert():
@@ -59,4 +55,4 @@ def convert():
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

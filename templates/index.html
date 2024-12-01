@@ -1,76 +1,334 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Converter</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Document Processing Tools</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #e2e8f0;
+            --bs-primary: #3b82f6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--bs-body-color);
+            min-height: 100vh;
+            padding: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            color: #60a5fa;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.25rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            color: #60a5fa;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .service-select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .service-select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+            outline: none;
+        }
+
+        .service-form {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-label {
+            font-size: 0.813rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-container {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px dashed rgba(96, 165, 250, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .file-input-container:hover {
+            border-color: #60a5fa;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .file-input-container.dragover {
+            border-color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3b82f6, #2563eb);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.875rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #2563eb, #1d4ed8);
+            transform: translateY(-1px);
+        }
+
+        .btn-link {
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .btn-link:hover {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(96, 165, 250, 0.3);
+            border-radius: 50%;
+            border-top-color: #60a5fa;
+            animation: spin 1s linear infinite;
+        }
+
+        .alert {
+            margin-top: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-            <h1 class="text-2xl font-bold text-center mb-6">File Converter</h1>
-            
-            <div class="mb-6">
-                <p class="text-gray-600 text-center">Convert between PDF and PNG formats</p>
+<body>
+    <div class="container">
+        <h1 class="page-title">
+            <i class="bi bi-tools"></i>
+            Document Processing Tools
+        </h1>
+
+        <div class="card">
+            <div class="card-title">
+                <i class="bi bi-gear-fill"></i>
+                Convert Your Files
             </div>
 
-            <form id="uploadForm" class="space-y-4">
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                    <input type="file" id="fileInput" accept=".pdf,.png" class="hidden">
-                    <label for="fileInput" class="block text-center cursor-pointer">
-                        <span class="text-blue-500 hover:text-blue-600">Choose a file</span>
-                        <span class="text-gray-500"> or drag it here</span>
-                    </label>
-                </div>
+            <form id="uploadForm">
+                <select id="serviceType" class="service-select">
+                    <option value="">Select Service Type</option>
+                    <option value="pdf">PDF Tools</option>
+                    <option value="image">Image Tools</option>
+                </select>
 
-                <div id="fileInfo" class="hidden">
-                    <p class="text-sm text-gray-600">Selected file: <span id="fileName"></span></p>
-                </div>
+                <select id="service" class="service-select" disabled>
+                    <option value="">Select Service</option>
+                </select>
 
-                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
-                    Convert
-                </button>
+                <div id="dynamicForm" class="service-form">
+                    <div class="mb-3">
+                        <label class="form-label">Upload File</label>
+                        <div class="file-input-container" id="dropZone">
+                            <input type="file" id="fileInput" class="file-input" accept=".pdf,.png,.jpg,.jpeg">
+                            <p class="mb-2">Drop your file here or</p>
+                            <button type="button" class="btn btn-link" onclick="document.getElementById('fileInput').click()">
+                                Browse Files
+                            </button>
+                            <p class="selected-file mt-2 d-none"></p>
+                        </div>
+                    </div>
+
+                    <div id="additionalFields"></div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            Process File
+                        </button>
+                    </div>
+                </div>
             </form>
 
-            <div id="loading" class="hidden mt-4">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+            <div class="loading">
+                <div class="spinner"></div>
             </div>
 
-            <div id="error" class="hidden mt-4 text-red-500 text-center"></div>
+            <div id="error" class="alert alert-danger d-none"></div>
         </div>
     </div>
 
     <script>
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const loading = document.getElementById('loading');
-        const error = document.getElementById('error');
+        const services = {
+            pdf: [
+                { name: 'Convert to PNG', value: 'pdf_to_png' },
+                { name: 'Add Watermark', value: 'add_watermark' },
+                { name: 'Split PDF', value: 'split_pdf' },
+                { name: 'Rotate PDF', value: 'rotate_pdf' }
+            ],
+            image: [
+                { name: 'Convert to PDF', value: 'image_to_pdf' },
+                { name: 'Remove Background', value: 'remove_background' },
+                { name: 'Resize Image', value: 'resize_image' },
+                { name: 'Convert Format', value: 'convert_format' },
+                { name: 'Compress Image', value: 'compress_image' }
+            ]
+        };
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                fileName.textContent = file.name;
-                fileInfo.classList.remove('hidden');
+        function updateServices() {
+            const serviceType = document.getElementById('serviceType').value;
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = '<option value="">Select Service</option>';
+            serviceSelect.disabled = !serviceType;
+
+            if (serviceType && services[serviceType]) {
+                services[serviceType].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.value;
+                    option.textContent = service.name;
+                    serviceSelect.appendChild(option);
+                });
+            }
+        }
+
+        document.getElementById('serviceType').addEventListener('change', function() {
+            const serviceType = this.value;
+            const dynamicForm = document.getElementById('dynamicForm');
+            const additionalFieldsContainer = document.getElementById('additionalFields');
+            
+            updateServices();
+            
+            if (serviceType) {
+                dynamicForm.classList.remove('d-none');
+            } else {
+                dynamicForm.classList.add('d-none');
+            }
+            
+            // Clear additional fields
+            additionalFieldsContainer.innerHTML = '';
+        });
+
+        document.getElementById('service').addEventListener('change', function() {
+            const service = this.value;
+            const additionalFieldsContainer = document.getElementById('additionalFields');
+            additionalFieldsContainer.innerHTML = '';
+
+            // Add service-specific fields
+            if (service === 'resize_image') {
+                additionalFieldsContainer.innerHTML = `
+                    <div class="mb-3">
+                        <label class="form-label">Width (px)</label>
+                        <input type="number" class="form-control" name="width" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Height (px)</label>
+                        <input type="number" class="form-control" name="height" min="1">
+                    </div>
+                `;
+            } else if (service === 'rotate_pdf') {
+                additionalFieldsContainer.innerHTML = `
+                    <div class="mb-3">
+                        <label class="form-label">Rotation Angle</label>
+                        <select class="form-control" name="angle">
+                            <option value="90">90°</option>
+                            <option value="180">180°</option>
+                            <option value="270">270°</option>
+                        </select>
+                    </div>
+                `;
             }
         });
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const file = fileInput.files[0];
-            if (!file) {
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const fileInput = document.getElementById('fileInput');
+            const loading = document.querySelector('.loading');
+            const error = document.getElementById('error');
+
+            if (!fileInput.files.length) {
                 error.textContent = 'Please select a file';
-                error.classList.remove('hidden');
+                error.classList.remove('d-none');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', fileInput.files[0]);
 
-            loading.classList.remove('hidden');
-            error.classList.add('hidden');
+            // Add additional fields if they exist
+            const additionalFields = document.getElementById('additionalFields').querySelectorAll('input, select');
+            additionalFields.forEach(field => {
+                if (field.name && field.value) {
+                    formData.append(field.name, field.value);
+                }
+            });
+
+            loading.style.display = 'flex';
+            error.classList.add('d-none');
 
             try {
                 const response = await fetch('/convert', {
@@ -86,57 +344,89 @@
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
+                const originalFileName = fileInput.files[0].name;
+                const extension = originalFileName.split('.').pop().toLowerCase();
+                
+                // Set the appropriate extension for the output file
+                let outputExtension;
+                if (extension === 'pdf') {
+                    outputExtension = 'png';
+                } else {
+                    outputExtension = 'pdf';
+                }
+                
                 a.href = url;
-                a.download = file.name.split('.')[0] + (file.name.endsWith('.pdf') ? '.png' : '.pdf');
+                a.download = `${originalFileName.split('.')[0]}.${outputExtension}`;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
+
+                // Reset the form
+                form.reset();
+                document.querySelector('.selected-file').textContent = '';
+                document.querySelector('.selected-file').classList.add('d-none');
             } catch (err) {
                 error.textContent = err.message;
-                error.classList.remove('hidden');
+                error.classList.remove('d-none');
             } finally {
-                loading.classList.add('hidden');
+                loading.style.display = 'none';
+            }
+        }
+
+        // File input styling
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', function() {
+            const container = this.parentElement;
+            const selectedFile = container.querySelector('.selected-file');
+            if (this.files.length) {
+                selectedFile.textContent = `Selected: ${this.files[0].name}`;
+                selectedFile.classList.remove('d-none');
+            } else {
+                selectedFile.textContent = '';
+                selectedFile.classList.add('d-none');
             }
         });
 
-        // Drag and drop support
-        const dropZone = document.querySelector('.border-dashed');
+        // Initialize form
+        document.getElementById('uploadForm').addEventListener('submit', handleSubmit);
+        updateServices();
+
+        // Drag and drop handling
+        const dropZone = document.getElementById('dropZone');
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
 
-        function preventDefaults (e) {
+        function preventDefaults(e) {
             e.preventDefault();
             e.stopPropagation();
         }
 
         ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('dragover');
+            }, false);
         });
 
         ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('dragover');
+            }, false);
         });
 
-        function highlight(e) {
-            dropZone.classList.add('border-blue-500');
-        }
-
-        function unhighlight(e) {
-            dropZone.classList.remove('border-blue-500');
-        }
-
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        function handleDrop(e) {
+        dropZone.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
-            const file = dt.files[0];
-            fileInput.files = dt.files;
-            fileName.textContent = file.name;
-            fileInfo.classList.remove('hidden');
-        }
+            const files = dt.files;
+            fileInput.files = files;
+            
+            const selectedFile = dropZone.querySelector('.selected-file');
+            if (files.length) {
+                selectedFile.textContent = `Selected: ${files[0].name}`;
+                selectedFile.classList.remove('d-none');
+            }
+        }, false);
     </script>
 </body>
 </html>
